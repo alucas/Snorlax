@@ -6,7 +6,7 @@
 	<string name="notification_gym_eject_title">%1$s lost the battle!</string>
 	<string name="notification_gym_eject_content">Ejected from : %s</string>
 
-	<string name="notification_title">%1$s - CP %2$d - Lvl %3$3.1f</string>
+	<string name="notification_title">%1$s - CP %2$d - Lvl %3$3.1f - %4$s</string>
 	<string name="notification_content">{iv} %1$2.0f%% {flee} %2$2.0f%% {pokeball} %3$2.0f%% {greatball} %4$2.0f%% {ultraball} %5$2.0f%%</string>
 
 	<string name="notification_category_stats_title">Stats</string>

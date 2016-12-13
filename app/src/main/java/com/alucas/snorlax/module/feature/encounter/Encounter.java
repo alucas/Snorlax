@@ -102,7 +102,7 @@ public final class Encounter implements Feature {
 	private void onWildEncounter(ByteString bytes) {
 		try {
 			EncounterResponse response = EncounterResponse.parseFrom(bytes);
-			onEncounter(response.getWildPokemon().getPokemonData(), response.getCaptureProbability());
+			onEncounter(RequestType.ENCOUNTER, response.getWildPokemon().getPokemonData(), response.getCaptureProbability());
 		} catch (InvalidProtocolBufferException | NullPointerException e) {
 			Log.d("EncounterResponse failed: %s", e.getMessage());
 			Log.e(e);
@@ -115,7 +115,7 @@ public final class Encounter implements Feature {
 	private void onDiskEncounter(ByteString bytes) {
 		try {
 			DiskEncounterResponse response = DiskEncounterResponse.parseFrom(bytes);
-			onEncounter(response.getPokemonData(), response.getCaptureProbability());
+			onEncounter(RequestType.DISK_ENCOUNTER, response.getPokemonData(), response.getCaptureProbability());
 		} catch (InvalidProtocolBufferException | NullPointerException e) {
 			Log.d("DiskEncounterResponse failed: %s", e.getMessage());
 			Log.e(e);
@@ -128,7 +128,7 @@ public final class Encounter implements Feature {
 	private void onIncenseEncounter(ByteString bytes) {
 		try {
 			IncenseEncounterResponse response = IncenseEncounterResponse.parseFrom(bytes);
-			onEncounter(response.getPokemonData(), response.getCaptureProbability());
+			onEncounter(RequestType.INCENSE_ENCOUNTER, response.getPokemonData(), response.getCaptureProbability());
 		} catch (InvalidProtocolBufferException | NullPointerException e) {
 			Log.d("IncenseEncounterResponse failed: %s", e.getMessage());
 			Log.e(e);
@@ -138,7 +138,7 @@ public final class Encounter implements Feature {
 		}
 	}
 
-	private void onEncounter(PokemonData pokemonData, CaptureProbability captureProbability) {
+	private void onEncounter(RequestType encounterType, PokemonData pokemonData, CaptureProbability captureProbability) {
 		Pokemon pokemon = mPokemonFactory.with(pokemonData);
 		if (pokemon == null) {
 			Log.d(LOG_PREFIX + "Failed to create Pokemon from PokemonData");
@@ -148,28 +148,11 @@ public final class Encounter implements Feature {
 		PokemonProbability probability = mPokemonProbabilityFactory.with(captureProbability);
 
 		mEncounterNotification.show(
-			pokemon.getNumber(),
-			pokemon.getName(),
-			pokemon.getIv() * 100,
-			pokemon.getIVAttack(),
-			pokemon.getIVDefense(),
-			pokemon.getIVStamina(),
-			pokemon.getCp(),
-			pokemon.getLevel(),
-			pokemon.getHp(),
-			pokemon.getBaseWeight(),
-			pokemon.getWeight(),
-			pokemon.getBaseHeight(),
-			pokemon.getHeight(),
-			pokemon.getMoveFast(),
-			pokemon.getMoveCharge(),
-			pokemon.getFleeRate() * 100,
+			encounterType,
+			pokemon,
 			probability.getPokeball(),
 			probability.getGreatball(),
-			probability.getUltraball(),
-			pokemon.getType1(),
-			pokemon.getType2(),
-			pokemon.getPokemonClass()
+			probability.getUltraball()
 		);
 	}
 

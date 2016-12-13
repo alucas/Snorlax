@@ -42,6 +42,7 @@ import com.alucas.snorlax.common.Strings;
 import com.alucas.snorlax.module.NotificationId;
 import com.alucas.snorlax.module.context.pokemongo.PokemonGo;
 import com.alucas.snorlax.module.context.snorlax.Snorlax;
+import com.alucas.snorlax.module.pokemon.Pokemon;
 import com.alucas.snorlax.module.pokemon.PokemonFormat;
 import com.alucas.snorlax.module.util.Resource;
 import com.alucas.snorlax.module.util.Resource.MODIFIER;
@@ -49,6 +50,7 @@ import com.alucas.snorlax.module.util.Resource.MODIFIER;
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Enums.PokemonRarityOuterClass.PokemonRarity;
 import POGOProtos.Enums.PokemonTypeOuterClass.PokemonType;
+import POGOProtos.Networking.Requests.RequestTypeOuterClass;
 import POGOProtos.Settings.Master.MoveSettingsOuterClass.MoveSettings;
 
 @Singleton
@@ -91,20 +93,20 @@ final class EncounterNotification {
 	}
 
 	@SuppressWarnings("deprecation")
-	void show(int pokemonNumber, String pokemonName, double iv, int attack, int defense, int stamina, int cp, double level, int hp, double baseWeight, double weight, double baseHeight, double height, MoveSettings fastMove, MoveSettings chargeMove, double fleeRate, double pokeRate, double greatRate, double ultraRate, PokemonType type1, PokemonType type2, PokemonRarity pokemonClass) {
-		final double weightRatio = weight / baseWeight;
-		final double heightRatio = height / baseHeight;
-		final MODIFIER resourceModifier = (pokemonNumber == PokemonId.PIKACHU_VALUE ? MODIFIER.FAN
-			: pokemonNumber == PokemonId.RATTATA_VALUE && heightRatio < 0.80 ? MODIFIER.YOUNGSTER
-			: pokemonNumber == PokemonId.MAGIKARP_VALUE && weightRatio > 1.30 ? MODIFIER.FISHERMAN
+	void show(RequestTypeOuterClass.RequestType encounterType, Pokemon pokemon, double pokeRate, double greatRate, double ultraRate) {
+		final double weightRatio = pokemon.getWeight() / pokemon.getBaseWeight();
+		final double heightRatio = pokemon.getHeight() / pokemon.getBaseHeight();
+		final MODIFIER resourceModifier = (pokemon.getNumber() == PokemonId.PIKACHU_VALUE ? MODIFIER.FAN
+			: pokemon.getNumber() == PokemonId.RATTATA_VALUE && heightRatio < 0.80 ? MODIFIER.YOUNGSTER
+			: pokemon.getNumber() == PokemonId.MAGIKARP_VALUE && weightRatio > 1.30 ? MODIFIER.FISHERMAN
 			: MODIFIER.NO);
 
-		final String fastMoveName = PokemonFormat.formatMove(fastMove.getMovementId());
-		final String chargeMoveName = PokemonFormat.formatMove(chargeMove.getMovementId());
-		final String fastMoveTypeName = PokemonFormat.formatType(fastMove.getPokemonType());
-		final String chargeMoveTypeName = PokemonFormat.formatType(chargeMove.getPokemonType());
-		final String fastMoveTypeSymbol = TYPE_SYMBOL.containsKey(fastMove.getPokemonType()) ? mResources.getString(TYPE_SYMBOL.get(fastMove.getPokemonType())) : "?";
-		final String chargeMoveTypeSymbol = TYPE_SYMBOL.containsKey(chargeMove.getPokemonType()) ? mResources.getString(TYPE_SYMBOL.get(chargeMove.getPokemonType())) : "?";
+		final String fastMoveName = PokemonFormat.formatMove(pokemon.getMoveFast().getMovementId());
+		final String chargeMoveName = PokemonFormat.formatMove(pokemon.getMoveCharge().getMovementId());
+		final String fastMoveTypeName = PokemonFormat.formatType(pokemon.getMoveFast().getPokemonType());
+		final String chargeMoveTypeName = PokemonFormat.formatType(pokemon.getMoveCharge().getPokemonType());
+		final String fastMoveTypeSymbol = TYPE_SYMBOL.containsKey(pokemon.getMoveFast().getPokemonType()) ? mResources.getString(TYPE_SYMBOL.get(pokemon.getMoveFast().getPokemonType())) : "?";
+		final String chargeMoveTypeSymbol = TYPE_SYMBOL.containsKey(pokemon.getMoveCharge().getPokemonType()) ? mResources.getString(TYPE_SYMBOL.get(pokemon.getMoveCharge().getPokemonType())) : "?";
 
 		final Map<String, Pair<String, Integer>> symbols = getSymbolReplacementTable();
 		new Handler(Looper.getMainLooper()).post(() -> {
@@ -113,23 +115,23 @@ final class EncounterNotification {
 				.setLargeIcon(Bitmap.createScaledBitmap(
 					BitmapFactory.decodeResource(
 						mResources,
-						Resource.getPokemonResourceId(mContext, mResources, pokemonNumber, resourceModifier)
+						Resource.getPokemonResourceId(mContext, mResources, pokemon.getNumber(), resourceModifier)
 					),
 					Resource.getLargeIconWidth(mResources),
 					Resource.getLargeIconHeight(mResources),
 					false
 				))
-				.setContentTitle(EncounterFormat.format(mContext.getString(R.string.notification_title, pokemonName, cp, level), symbols))
-				.setContentText(EncounterFormat.format(mContext.getString(R.string.notification_content, iv, fleeRate, pokeRate, greatRate, ultraRate), symbols))
+				.setContentTitle(EncounterFormat.format(mContext.getString(R.string.notification_title, pokemon.getName(), pokemon.getCp(), pokemon.getLevel(), EncounterFormat.formatEncounterType((encounterType))), symbols))
+				.setContentText(EncounterFormat.format(mContext.getString(R.string.notification_content, pokemon.getIv() * 100, pokemon.getFleeRate() * 100, pokeRate, greatRate, ultraRate), symbols))
 				.setStyle(new NotificationCompat.InboxStyle()
-					.addLine(EncounterFormat.format(mContext.getString(R.string.notification_category_stats_content_iv, iv, attack, defense, stamina), symbols))
-					.addLine(EncounterFormat.format(mContext.getString(R.string.notification_category_stats_content_hp, hp, fleeRate), symbols))
+					.addLine(EncounterFormat.format(mContext.getString(R.string.notification_category_stats_content_iv, pokemon.getIv() * 100, pokemon.getIVAttack(), pokemon.getIVDefense(), pokemon.getIVStamina()), symbols))
+					.addLine(EncounterFormat.format(mContext.getString(R.string.notification_category_stats_content_hp, pokemon.getHp(), pokemon.getFleeRate() * 100), symbols))
 					.addLine(EncounterFormat.bold(mContext.getString(R.string.notification_category_moves_title)))
-					.addLine(EncounterFormat.format(mContext.getString(R.string.notification_category_moves_fast, fastMoveName, fastMoveTypeName, fastMove.getPower()), symbols))
-					.addLine(EncounterFormat.format(mContext.getString(R.string.notification_category_moves_charge, chargeMoveName, chargeMoveTypeName, chargeMove.getPower()), symbols))
+					.addLine(EncounterFormat.format(mContext.getString(R.string.notification_category_moves_fast, fastMoveName, fastMoveTypeName, pokemon.getMoveFast().getPower()), symbols))
+					.addLine(EncounterFormat.format(mContext.getString(R.string.notification_category_moves_charge, chargeMoveName, chargeMoveTypeName, pokemon.getMoveCharge().getPower()), symbols))
 					.addLine(EncounterFormat.bold(mContext.getString(R.string.notification_categoty_catch_title)))
 					.addLine(EncounterFormat.format(mContext.getString(R.string.notification_categoty_catch_content, pokeRate, greatRate, ultraRate), symbols))
-					.setSummaryText(getFooter(type1, type2, pokemonClass))
+					.setSummaryText(getFooter(pokemon.getType1(), pokemon.getType2(), pokemon.getPokemonClass()))
 				)
 				.setColor(ContextCompat.getColor(mContext, R.color.red_700))
 				.setAutoCancel(true)
