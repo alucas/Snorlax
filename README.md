@@ -8,7 +8,7 @@ This module acts as a [man in the middle](https://en.wikipedia.org/wiki/Man-in-t
 
 ### Features:
 - Prevent PokemonGo from detecting GPS is being spoofed (similar to Mock Mock Locations)
-- Replace pokemons name with custom formats ([details](https://github.com/igoticecream/Snorlax/wiki/Custom-formats)) :
+- Replace pokemons name with custom formats ([details](https://github.com/alucas/Snorlax/wiki/Rename-formats)) :
   - Name, Nickname
   - Level
   - Type
