@@ -18,6 +18,7 @@ package com.alucas.snorlax.module;
 
 import javax.inject.Singleton;
 
+import com.alucas.snorlax.common.dagger.GsonModule;
 import com.alucas.snorlax.module.context.pokemongo.PokemonGoContextModule;
 import com.alucas.snorlax.module.context.snorlax.SnorlaxContextModule;
 
@@ -28,6 +29,7 @@ import dagger.Component;
 @Component(modules = {
 	SnorlaxModule.class,
 	SnorlaxContextModule.class,
+	GsonModule.class,
 	PokemonGoContextModule.class
 })
 interface SnorlaxComponent {

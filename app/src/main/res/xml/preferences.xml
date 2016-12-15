@@ -99,6 +99,12 @@
 	<PreferenceCategory
 		android:title="@string/preference_gym_group">
 
+		<!--suppress AndroidElementNotAllowed -->
+		<com.alucas.snorlax.app.widget.ButtonPreference
+			android:summary="@string/preference_gym_pokemon_list_summary"
+			android:title="@string/preference_gym_pokemon_list_title"
+			/>
+
 		<SwitchPreference
 			android:defaultValue="@bool/preference_gym_eject_notification_enable_default"
 			android:key="@string/preference_gym_eject_notification_enable_key"

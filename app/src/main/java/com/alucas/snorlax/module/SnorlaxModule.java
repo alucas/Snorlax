@@ -86,23 +86,6 @@ final class SnorlaxModule {
 
 	@Provides
 	@Singleton
-	TypeAdapterFactory provideTypeAdapterFactory() {
-		return GsonAdapterFactory.create();
-	}
-
-	@Provides
-	@Singleton
-	Gson provideGson(TypeAdapterFactory typeAdapterFactory) {
-		return new GsonBuilder()
-			.serializeNulls()
-			.setPrettyPrinting()
-			.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-			.registerTypeAdapterFactory(typeAdapterFactory)
-			.create();
-	}
-
-	@Provides
-	@Singleton
 	AlarmManager provideAlarmManager() {
 		return (AlarmManager) mApplication.getSystemService(Context.ALARM_SERVICE);
 	}

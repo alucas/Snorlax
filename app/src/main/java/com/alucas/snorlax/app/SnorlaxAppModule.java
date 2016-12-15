@@ -23,6 +23,12 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.res.Resources;
 
+import com.alucas.snorlax.module.util.GsonAdapterFactory;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapterFactory;
+
 import dagger.Module;
 import dagger.Provides;
 

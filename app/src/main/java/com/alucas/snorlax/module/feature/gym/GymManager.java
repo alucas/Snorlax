@@ -7,7 +7,7 @@ import android.util.LongSparseArray;
 
 @Singleton
 public class GymManager {
-	private LongSparseArray<GymData> mPokemonsInGym;
+	private LongSparseArray<GymData> mPokemonsInGym = new LongSparseArray<>();
 
 	@Inject
 	public GymManager() {
@@ -32,5 +32,13 @@ public class GymManager {
 
 	public GymData getPokemonInGym(final Long pokemonUID) {
 		return mPokemonsInGym.get(pokemonUID);
+	}
+
+	public int getPokemonInGymSize() {
+		return mPokemonsInGym.size();
+	}
+
+	public GymData getPokemonInGymById(final int id) {
+		return getPokemonInGym(mPokemonsInGym.keyAt(id));
 	}
 }
