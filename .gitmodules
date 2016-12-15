@@ -1,4 +1,3 @@
 [submodule "app/src/proto"]
 	path = app/src/proto
 	url = https://github.com/alucas/POGOProtos.git
-	branch = v2.3.0
