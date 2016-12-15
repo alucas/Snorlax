@@ -5,8 +5,6 @@
 	package="com.alucas.snorlax"
 	>
 
-	<uses-permission android:name="android.permission.VIBRATE"/>
-
 	<application
 		android:name="com.alucas.snorlax.app.SnorlaxApp"
 		android:icon="@mipmap/ic_launcher"
