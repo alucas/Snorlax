@@ -16,6 +16,7 @@
 
 package com.alucas.snorlax.module.feature.rename;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -97,6 +98,21 @@ public final class Rename implements Feature, MitmListener {
 		GetInventoryResponse.Builder inventory = response.toBuilder();
 		InventoryDelta.Builder delta = inventory.getInventoryDelta().toBuilder();
 
+		HashMap<Integer, Integer> candyList = new HashMap<Integer, Integer>();
+
+		for (int i = 0; i < delta.getInventoryItemsCount(); i++) {
+
+			InventoryItem.Builder item = delta.getInventoryItems(i).toBuilder();
+			InventoryItemData.Builder data = item.getInventoryItemData().toBuilder();
+
+			if(data.hasCandy()) {
+				candyList.put(
+						data.getCandy().getFamilyIdValue(),
+						data.getCandy().getCandy()
+				);
+			}
+		}
+
 		for (int i = 0; i < delta.getInventoryItemsCount(); i++) {
 
 			InventoryItem.Builder item = delta.getInventoryItems(i).toBuilder();
@@ -110,7 +126,7 @@ public final class Rename implements Feature, MitmListener {
 					final boolean isNickname = !Strings.isNullOrEmpty(pokemon.getNickname());
 
 					if ((isFavoriteEnable || !isFavorite) && (isNicknamedEnable || !isNickname)) {
-						pokemon.setNickname(mRenameFormat.format(data.getPokemonData()));
+						pokemon.setNickname(mRenameFormat.format(data.getPokemonData(), candyList));
 					}
 				}
 				catch (NullPointerException | IllegalArgumentException e) {

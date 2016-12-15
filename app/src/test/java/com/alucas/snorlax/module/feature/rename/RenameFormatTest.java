@@ -18,6 +18,7 @@ package com.alucas.snorlax.module.feature.rename;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.HashMap;
 
 import com.alucas.snorlax.module.pokemon.Pokemon;
 import com.alucas.snorlax.module.pokemon.PokemonFactory;
@@ -113,7 +114,7 @@ public class RenameFormatTest {
 	@After
 	public void tearDown() throws Exception {
 		// When
-		final String formatted = mSut.format(mProto);
+		final String formatted = mSut.format(mProto, new HashMap<>());
 
 		// Then
 		Mockito.verify(mPokemonFactory).with(mProto);

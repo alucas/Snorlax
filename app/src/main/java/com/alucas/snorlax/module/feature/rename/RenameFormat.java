@@ -17,6 +17,7 @@
 package com.alucas.snorlax.module.feature.rename;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,6 +62,7 @@ final class RenameFormat {
 	private static final String BASE_TYP2 = "TYP2";
 	private static final String BASE_CP = "CP";
 	private static final String BASE_CPL = "CPL";
+	private static final String BASE_CAND = "CAND";
 
 	private final PokemonFactory mPokemonFactory;
 	private final RenamePreferences mRenamePreferences;
@@ -72,7 +74,7 @@ final class RenameFormat {
 	}
 
 	@NonNull
-	String format(PokemonData pokemonData) {
+	String format(PokemonData pokemonData, HashMap<Integer, Integer> candyList) {
 		final Pokemon pokemon = mPokemonFactory.with(pokemonData);
 		final String format = mRenamePreferences.getFormat();
 
@@ -101,7 +103,7 @@ final class RenameFormat {
 				builder.append(format.substring(i, nextDelimiter));
 				i = nextDelimiter;
 			} else {
-				builder.append(processFormat(pokemon, format.substring(i + 1, nextDelimiter)));
+				builder.append(processFormat(pokemon, format.substring(i + 1, nextDelimiter), candyList));
 				i = nextDelimiter + 1;
 			}
 		}
@@ -109,7 +111,7 @@ final class RenameFormat {
 		return builder.toString();
 	}
 
-	private String processFormat(Pokemon pokemon, String command) {
+	private String processFormat(Pokemon pokemon, String command, HashMap<Integer, Integer> candyList) {
 		final String target = command.toUpperCase(Locale.getDefault());
 
 		String processed = null;
@@ -146,6 +148,8 @@ final class RenameFormat {
 			processed = processStamina(target, pokemon.getIVStamina());
 		} else if (target.startsWith(BASE_CP)) {
 			processed = processCP(target, pokemon);
+		} else if (target.startsWith(BASE_CAND)) {
+			processed = processCandy(target, pokemon, candyList);
 		}
 
 		return Strings.isNullOrEmpty(processed) ? DELIMITERS.get(0) + command + DELIMITERS.get(0) : processed;
@@ -382,5 +386,13 @@ final class RenameFormat {
 		}
 
 		return null;
+	}
+
+	@Nullable
+	private String processCandy(String target, Pokemon pokemon, HashMap<Integer, Integer> candyList) {
+		if(candyList == null || !candyList.containsKey(pokemon.getFamilyID()))
+			return "-";
+		else
+			return Decimals.format(candyList.get(pokemon.getFamilyID()), 1, 3, 0, 0);
 	}
 }

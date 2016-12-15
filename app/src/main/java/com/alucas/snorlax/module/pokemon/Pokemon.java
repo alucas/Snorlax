@@ -18,6 +18,7 @@ package com.alucas.snorlax.module.pokemon;
 
 import java.util.List;
 
+import POGOProtos.Enums.PokemonFamilyIdOuterClass;
 import POGOProtos.Enums.PokemonRarityOuterClass.PokemonRarity;
 import POGOProtos.Enums.PokemonTypeOuterClass.PokemonType;
 import POGOProtos.Settings.Master.MoveSettingsOuterClass.MoveSettings;
@@ -86,6 +87,11 @@ public final class Pokemon {
 
 	public int getCp() {
 		return mPokemonData.getCp();
+	}
+
+	public int getFamilyID()
+	{
+		return PokemonSettingsRegistry.getSettings(mPokemonData.getPokemonId()).getFamilyId().getNumber();
 	}
 
 	public int getLastEvolutionCp() {
