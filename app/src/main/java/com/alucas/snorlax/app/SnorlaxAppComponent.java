@@ -19,14 +19,20 @@ package com.alucas.snorlax.app;
 import javax.inject.Singleton;
 
 import com.alucas.snorlax.app.receiver.CollectDefenderReceiver;
+import com.alucas.snorlax.app.widget.ButtonPreference;
+import com.alucas.snorlax.common.dagger.GsonModule;
+import com.alucas.snorlax.module.context.pokemongo.PokemonGoContextModule;
 
 import dagger.Component;
 
-@FunctionalInterface
 @Singleton
 @Component(modules = {
-	SnorlaxAppModule.class
+	SnorlaxAppModule.class,
+	GsonModule.class,
+	PokemonGoContextModule.class
 })
 public interface SnorlaxAppComponent {
 	void inject(CollectDefenderReceiver receiver);
+
+	void inject(ButtonPreference preference);
 }

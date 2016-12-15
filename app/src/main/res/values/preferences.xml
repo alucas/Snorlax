@@ -64,6 +64,10 @@
 
 	<string name="preference_gym_group">Gym</string>
 
+	<string name="preference_gym_pokemon_list_title">Show pokemons in gym</string>
+	<string name="preference_gym_pokemon_list_summary"></string>
+	<string name="preference_gym_pokemon_list_button">Open map</string>
+
 	<bool name="preference_gym_eject_notification_enable_default">true</bool>
 	<string name="preference_gym_eject_notification_enable_key">gym_eject_notification_key</string>
 	<string name="preference_gym_eject_notification_enable_title">Alert on gym ejection</string>

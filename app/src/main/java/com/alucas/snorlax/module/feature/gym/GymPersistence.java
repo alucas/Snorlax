@@ -11,7 +11,7 @@ import android.util.LongSparseArray;
 import android.util.Pair;
 
 import com.alucas.snorlax.common.rx.RxFuncitons;
-import com.alucas.snorlax.module.context.pokemongo.PokemonGo;
+import com.alucas.snorlax.module.context.snorlax.Snorlax;
 import com.alucas.snorlax.module.feature.Feature;
 import com.alucas.snorlax.module.util.Log;
 import com.google.gson.Gson;
@@ -34,13 +34,13 @@ public class GymPersistence implements Feature {
 	private Subscription mSubscription;
 
 	@Inject
-	public GymPersistence(@PokemonGo final Context context, final Gson gson, final Gym gym, final GymManager gymManager) {
+	public GymPersistence(@Snorlax final Context context, final Gson gson, final Gym gym, final GymManager gymManager) {
 		this.mContext = context;
 		this.mGson = gson;
 		this.mGym = gym;
 		this.mGymManager = gymManager;
 
-		gymManager.initPokemonInGym(loadPokemonInGym(mContext));
+		this.mGymManager.initPokemonInGym(loadPokemonInGym(mContext, mGson));
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class GymPersistence implements Feature {
 		RxFuncitons.unsubscribe(mSubscription);
 	}
 
-	private LongSparseArray<GymData> loadPokemonInGym(final Context context) {
+	public static LongSparseArray<GymData> loadPokemonInGym(final Context context, final Gson gson) {
 		final SharedPreferences settings = context.getSharedPreferences(PREF_POKEMON_IN_GYM, 0);
 		final LongSparseArray<GymData> pokemonsInGym = new LongSparseArray<>();
 		final Map<String, ?> pokemonsInGymRaw = settings.getAll();
@@ -85,7 +85,7 @@ public class GymPersistence implements Feature {
 
 			GymData gymData = null;
 			try {
-				gymData = mGson.fromJson((String) pokemonEntry.getValue(), GymData.class);
+				gymData = gson.fromJson((String) pokemonEntry.getValue(), GymData.class);
 			} catch (JsonSyntaxException e) {
 				Log.e(e);
 				gymData = new GymData(pokemonEntry.getKey());
@@ -99,6 +99,7 @@ public class GymPersistence implements Feature {
 		return pokemonsInGym;
 	}
 
+	@SuppressWarnings("unused")
 	private void savePokemonInGym(final Context context, final long pokemonUID, final GymData gymData) {
 		Log.d(LOG_PREFIX + "savePokemonInGym : " + pokemonUID + ", '" + gymData + "'");
 
@@ -110,6 +111,7 @@ public class GymPersistence implements Feature {
 		mGymManager.savePokemonInGym(pokemonUID, gymData);
 	}
 
+	@SuppressWarnings("unused")
 	private void removePokemonInGym(final Context context, final long pokemonUID) {
 		Log.d(LOG_PREFIX + "removePokemonInGym : " + pokemonUID);
 
