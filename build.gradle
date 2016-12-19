@@ -33,7 +33,7 @@ task clean(type: Delete, description: 'Cleans the root project build directory.'
 }
 
 task wrapper(type: Wrapper, description: 'Updates the gradle wrapper version.') {
-    gradleVersion = '3.1'
+    gradleVersion = '3.2.1'
 }
 
 task updateSubmodules(type: Exec, group: 'git', description: 'Updates git submodules') {

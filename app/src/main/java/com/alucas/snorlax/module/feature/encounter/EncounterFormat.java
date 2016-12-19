@@ -11,6 +11,8 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
+import POGOProtos.Networking.Requests.RequestTypeOuterClass;
+
 public class EncounterFormat {
 	private static final Character SYMBOL_DELIMITER_START = '{';
 	private static final Character SYMBOL_DELIMITER_END = '}';
@@ -64,6 +66,19 @@ public class EncounterFormat {
 		}
 
 		return formattedText;
+	}
+
+	static String formatEncounterType(RequestTypeOuterClass.RequestType encounterType)	{
+		switch (encounterType) {
+			case ENCOUNTER:
+				return "[Wild]";
+			case DISK_ENCOUNTER:
+				return "[Disk]";
+			case INCENSE_ENCOUNTER:
+				return "[Incense]";
+			default:
+				return "[]";
+		}
 	}
 
 	static class ColorPos {
